@@ -2,7 +2,7 @@
 #include "FS.h"
 #include <LittleFS.h>
 #include <SimpleFTPServer.h>
-
+#define wifi WiFi
 
 //#### HOW TO CONNECT ####
 //Using an FTP client (such as FileZilla, or most file explorers), type the boards local IP
@@ -19,8 +19,8 @@ constexpr int LEDWrite = 21;
 constexpr int LEDDelete = 19;
 
 //WiFi Data and file name
-constexpr char* ssid = "WIFI";
-constexpr char* password = "PASS";
+constexpr char* ssid = "10 REAIS A SENHA";
+constexpr char* password = "26Pra23Guga";
 constexpr char* filename = "/TesteWifi.csv";
 constexpr char* PlaceFile = "/LastPlace.txt";
 
@@ -34,6 +34,9 @@ void createNewFile(){
   digitalWrite(LEDDelete, HIGH);
   Serial.println("Deleting file...");
   LittleFS.remove(filename);
+  if(!LittleFS.exists(filename)){
+    Serial.println("File Deleted Sucessfully");
+  }
   File file = LittleFS.open(filename, "w");
   file.println("Place, Point, Measure, Strength");
   file.close();
@@ -44,9 +47,7 @@ void createNewFile(){
   placeCount = 0;
   lineCount = 1;
   pointCount = 0;
-  if(!LittleFS.exists(filename)){
-    Serial.println("File Deleted Sucessfully");
-  }
+  
   
 }
 
@@ -77,7 +78,7 @@ void measurePoint(){
     return;
   }
 
-  int measure = WiFi.RSSI(); //Measured in dbm
+  float measure = WiFi.RSSI(); //Measured in dbm
 
   //Writing line to csv file
   file.print(placeCount);
@@ -136,7 +137,7 @@ void Makeavg(){
   }
   digitalWrite(LEDWrite, HIGH);
   digitalWrite(LEDDelete, HIGH);
-  long sum = 0;
+  float sum = 0;
   String line;
 
   Serial.print("Storing place ");
@@ -163,7 +164,7 @@ void Makeavg(){
   //storing average
   file = LittleFS.open(filename, "a");
   
-  short avg = sum/(pointCount);
+  float avg = sum/(pointCount);
   Serial.print("Place avg:");
   Serial.println(avg);
   if(file){
@@ -173,7 +174,7 @@ void Makeavg(){
     file.print(", ");
 
     //classifying average
-    if (avg >= -50) file.println("Very Strong");
+    if (avg >= -40) file.println("Very Strong");
     else if (avg >= -60) file.println("Strong");
     else if (avg >= -70) file.println("Ok");
     else if (avg >= -80) file.println("Weak");
@@ -281,7 +282,9 @@ void loop(){
 
   if(digitalRead(buttonWrite) == LOW){
     measurePoint();
+
     delay(1000);
+    
   }
   if(digitalRead(buttonChangePlace) == LOW){
     Makeavg();
