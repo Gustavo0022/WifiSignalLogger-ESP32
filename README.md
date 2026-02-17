@@ -2,10 +2,10 @@
 
 Made by:
 
-Gustavo Gomes ([Gustavo0022](https://github.com/Gustavo0022)) 
-Lucas Santana ([LucaskaSL](https://github.com/LucaskaSL))
-Irlan Felipe([])
-Paulo Medeiros([PauloBaja](https://github.com/PauloBaja))
+- Gustavo Gomes ([Gustavo0022](https://github.com/Gustavo0022)) 
+- Lucas Santana ([LucaskaSL](https://github.com/LucaskaSL))
+- Irlan Felipe([])
+- Paulo Medeiros([PauloBaja](https://github.com/PauloBaja))
 
 # Used Libraries
 
