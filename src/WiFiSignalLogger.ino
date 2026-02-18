@@ -4,7 +4,7 @@
 #include <SimpleFTPServer.h>
 #define wifi WiFi
 
-//#### HOW TO CONNECT ####
+//--------------- HOW TO CONNECT -------------
 //Using an FTP client (such as FileZilla, or most file explorers), type the boards local IP
 // (shown on the serial monitor after it's connected to WiFi) and type
 //username: esp32
@@ -12,15 +12,19 @@
 
 //I/O values
 //constexpr for defining variable values at compile time
-constexpr int buttonWrite = 15;
+constexpr int buttonMeasurePoint = 15;
 constexpr int buttonChangePlace = 22;
-constexpr int buttonCreateNewFile = 23;
+constexpr int buttonDelete = 23;
 constexpr int LEDWrite = 21;
 constexpr int LEDDelete = 19;
 
 //WiFi Data and file name
-constexpr char* ssid = "10 REAIS A SENHA";
-constexpr char* password = "26Pra23Guga";
+//---------------- YOUR WIFI NETWORK HERE -------------
+constexpr char* ssid = "YourSSID";
+constexpr char* password = "YourPassword";
+//-----------------------------------------------------
+
+
 constexpr char* filename = "/TesteWifi.csv";
 constexpr char* PlaceFile = "/LastPlace.txt";
 
@@ -149,41 +153,46 @@ void Makeavg(){
     file.readStringUntil('\n');
   }
 
+    //Power average:
+  //1. sum = sum+ 10^(dbmvalue/10);
+  //2. avg = sum/n (n = number of measurements);
+  //3. powerAvg = 10 * log10(avg)
+
   //parsing of the values of current place
   for(int i = 0; i< pointCount; i++){
     line = file.readStringUntil('\n');
     int comma = line.indexOf(',');
     comma = line.indexOf(',',comma+1);
     int comma2 = line.indexOf(',',comma+1);
-    sum = sum + line.substring(comma+2,comma2).toInt();
- 
-    
+    double newValue = line.substring(comma+2, comma2).toDouble();
+    sum = sum + pow(10,newValue/10.0); 
   }
   file.close();
 
   //storing average
   file = LittleFS.open(filename, "a");
   
-  float avg = sum/(pointCount);
+  double avg = sum/(pointCount);
+  double powerAvg = round(10*log10(avg));
+
   Serial.print("Place avg:");
-  Serial.println(avg);
+  Serial.println(powerAvg);
   if(file){
     file.print(placeCount);
     file.print(", avg, ");
-    file.print(avg);
+    file.print(powerAvg);
     file.print(", ");
 
     //classifying average
-    if (avg >= -40) file.println("Very Strong");
-    else if (avg >= -60) file.println("Strong");
-    else if (avg >= -70) file.println("Ok");
-    else if (avg >= -80) file.println("Weak");
-    else if (avg >= -90) file.println("Very Weak");
+    if (powerAvg >= -40) file.println("Very Strong");
+    else if (powerAvg >= -60) file.println("Strong");
+    else if (powerAvg >= -70) file.println("Ok");
+    else if (powerAvg >= -80) file.println("Weak");
+    else if (powerAvg >= -90) file.println("Very Weak");
     else file.println("Unusable");
     file.close();
     Serial.println("Average stored sucessfully. Next place");
   }
-  
   
   placeCount++;
   lineCount += (pointCount + 1);
@@ -207,11 +216,11 @@ void Makeavg(){
 void setup(){
   //serial and IO inicialization
   Serial.begin(115200);
-  pinMode(buttonWrite, INPUT_PULLUP);
+  pinMode(buttonMeasurePoint, INPUT_PULLUP);
   pinMode(buttonChangePlace, INPUT_PULLUP);
   pinMode(LEDWrite,OUTPUT);
   pinMode(LEDDelete,OUTPUT);
-  pinMode(buttonCreateNewFile, INPUT_PULLUP);
+  pinMode(buttonDelete, INPUT_PULLUP);
 
   //littleFS inicialization
   if(!LittleFS.begin()){
@@ -280,9 +289,8 @@ void setup(){
 void loop(){
   ftpSrv.handleFTP();
 
-  if(digitalRead(buttonWrite) == LOW){
+  if(digitalRead(buttonMeasurePoint) == LOW){
     measurePoint();
-
     delay(1000);
     
   }
@@ -290,7 +298,7 @@ void loop(){
     Makeavg();
     delay(1000);
   }
-  if(digitalRead(buttonCreateNewFile) == LOW){
+  if(digitalRead(buttonDelete) == LOW){
     createNewFile();
     delay(1000);
   } 
