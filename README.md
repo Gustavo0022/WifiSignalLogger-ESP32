@@ -5,7 +5,7 @@ This project is meant to be a Wifi Strength manual data logger built with an ESP
 Made by:
 - Gustavo Gomes ([Gustavo0022](https://github.com/Gustavo0022)) 
 - Lucas Santana ([LucaskaSL](https://github.com/LucaskaSL))
-- Irlan Felipe([])
+- Irlan Felipe ([IrlanS0](https://github.com/IrlanS0))
 - Paulo Medeiros([PauloBaja](https://github.com/PauloBaja))
 
 ## Used Libraries
@@ -45,11 +45,13 @@ To retrieve your measurements, use an FTP client (like FileZilla or a mobile fil
 |Delete All Data	| Reset Button (GPIO 23)	| LEDDelete (GPIO 19) Flashes |
 
 
-# How does it work
+## How does it work
 
-(write tomorrow)
+### Point measurement
 
-# Schematic
+### 
+
+## Schematic
 The main schematic is displayed below, showing every peripheral connected to the ESP32 board
 
 ![Schematic](./assets/circuit.png).

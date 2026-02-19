@@ -25,8 +25,8 @@ constexpr char* password = "YourPassword";
 //-----------------------------------------------------
 
 
-constexpr char* filename = "/TesteWifi.csv";
-constexpr char* PlaceFile = "/LastPlace.txt";
+constexpr char* filename = "/Measurements.csv";
+constexpr char* PlaceFile = "/Config.txt";
 
 FtpServer ftpSrv; //FTP Server
 
@@ -34,7 +34,7 @@ FtpServer ftpSrv; //FTP Server
 unsigned short pointCount = 0, placeCount, lineCount = 0;
 
 //Exclusion of current file, and creation of a blank file
-void createNewFile(){
+void deleteMeasurements(){
   digitalWrite(LEDDelete, HIGH);
   Serial.println("Deleting file...");
   LittleFS.remove(filename);
@@ -113,7 +113,7 @@ void measurePoint(){
 
 //calculation of the arithmetic average of the current point,
 //and change of place
-void Makeavg(){
+void makeAvg(){
 
   //preventing divide by 0
   if (pointCount == 0) {
@@ -295,11 +295,11 @@ void loop(){
     
   }
   if(digitalRead(buttonChangePlace) == LOW){
-    Makeavg();
+    makeAvg();
     delay(1000);
   }
   if(digitalRead(buttonDelete) == LOW){
-    createNewFile();
+    deleteMeasurements();
     delay(1000);
   } 
   
