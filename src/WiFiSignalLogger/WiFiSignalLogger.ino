@@ -173,7 +173,7 @@ void makeAvg(){
   file = LittleFS.open(filename, "a");
   
   double avg = sum/(pointCount);
-  double powerAvg = round(10*log10(avg));
+  double powerAvg = 10*log10(avg);
 
   Serial.print("Place avg:");
   Serial.println(powerAvg);
@@ -230,7 +230,7 @@ void setup(){
 
   //Wifi connection
   Serial.println("LittleFS opened sucessfully :)");
-  WiFi.begin(ssid,password);
+  WiFi.begin(ssid/*,password*/);
 
   int timeout_counter = 0;
   while (WiFi.status() != WL_CONNECTED && timeout_counter < 20) {
@@ -239,15 +239,19 @@ void setup(){
     timeout_counter++;
   }
   if(WiFi.status() == WL_CONNECTED){
-  Serial.println("\nConnected sucessfuly!");
+  Serial.print("\nConnected sucessfuly to ");
+  Serial.print(WiFi.SSID());
+  Serial.println("!");
+  Serial.println("##########################");
   Serial.print("IP: ");
   Serial.println(WiFi.localIP());
+  Serial.println("##########################");
   }
   else{
     Serial.println("Falha ao conectar!");
     Serial.println(WiFi.status());
   }  
-  ftpSrv.begin("esp32","esp32"); //ftp server
+   //ftp server
 
   //config file inicialization
   File config = LittleFS.open(PlaceFile, "r");
@@ -283,6 +287,8 @@ void setup(){
     Serial.println("- Press the white button to get a point measure");
     Serial.println("- Press the red button to change place");
   }
+
+  ftpSrv.begin("esp32","esp32");
 }
 
 //loop with FTP handler and button handlers
